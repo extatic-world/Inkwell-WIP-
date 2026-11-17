@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inkwell</title>
+
+  <!-- Fonts from Google Fonts (needs internet). Add more here, then add their names to FONTS in app.js -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;700&family=Lora:wght@400;700&family=Inter:wght@400;600&family=Caveat:wght@500&family=Space+Grotesk&display=swap">
+
+  <!-- All the looks (colours, layout) live in this file -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ============ 1. TOP NAVIGATION BAR (the leather bar) ============ -->
+  <nav id="nav">
+    <span class="logo">Inkwell</span>
+    <button class="tab" id="tabWrite">Write</button>
+    <button class="tab" id="tabBrowse">Browse</button>
+    <button class="tab" id="tabDict">Dictionary</button>
+    <button class="tab right" id="themeBtn">Dark mode</button>
+  </nav>
+
+  <!-- ============ 2. WRITE VIEW: sidebar (editor tools) + the notebook page ============ -->
+  <div id="writeView">
+
+    <!-- Button that re-opens the sidebar after it has been collapsed -->
+    <button class="btn" id="sideOpen" hidden>» Editor</button>
+
+    <aside id="side">
+      <!-- Tabs at the top of the sidebar, plus the collapse button -->
+      <div class="side-tabs">
+        <button id="sideTabEditor" class="on">Editor</button>
+        <button id="sideTabPosts">My posts</button>
+        <button id="sideClose" title="Collapse sidebar">«</button>
+      </div>
+
+      <!-- Editor tools -->
+      <div id="editorPanel">
+        <section>
+          <h3>Text</h3>
+          <select id="textStyle">
+            <option value="p">Paragraph</option>
+            <option value="h2">Heading</option>
+            <option value="blockquote">Quote</option>
+          </select>
+          <select id="fontSelect"></select>   <!-- filled in by app.js -->
+          <select id="sizeSelect">
+            <option value="2">Small</option>
+            <option value="3" selected>Normal</option>
+            <option value="5">Large</option>
+            <option value="6">Huge</option>
+          </select>
+          <div class="row">
+            <!-- data-cmd is the name of the browser editing command to run -->
+            <button class="tool" data-cmd="bold"><b>B</b></button>
+            <button class="tool" data-cmd="italic"><i>I</i></button>
+            <button class="tool" data-cmd="underline"><u>U</u></button>
+            <label class="tool" title="Text colour">A <input type="color" id="textColor" value="#222222"></label>
+            <label class="tool" title="Highlight colour">ab <input type="color" id="highlightColor" value="#ffe066"></label>
+          </div>
+          <div class="row">
+            <button class="tool" data-cmd="justifyLeft">Left</button>
+            <button class="tool" data-cmd="justifyCenter">Centre</button>
+            <button class="tool" data-cmd="justifyRight">Right</button>
+            <button class="tool" data-cmd="insertUnorderedList">• List</button>
+            <button class="tool" id="linkBtn">Link</button>
+          </div>
+        </section>
+
+        <section>
+          <h3>Insert</h3>
+          <div class="row">
+            <button class="btn ghost" id="addPhoto">+ Photo</button>
+            <button class="btn ghost" id="addVideo">+ Video</button>
+          </div>
+          <!-- Hidden file pickers; the buttons above open them -->
+          <input type="file" id="photoInput" accept="image/*" hidden>
+          <input type="file" id="videoInput" accept="video/*" hidden>
+        </section>
+
+        <section>
+          <h3>Paper</h3>
+          <div class="row">
+            <!-- Each preset button stores its colours in data-paper / data-ink -->
+            <button class="preset" data-paper="" data-ink="">Default</button>
+            <button class="preset" data-paper="#fbf3df" data-ink="#3a2f22">Cream</button>
+            <button class="preset" data-paper="#e9f5ee" data-ink="#1d3a2b">Mint</button>
+            <button class="preset" data-paper="#1f2333" data-ink="#e9e6f0">Night</button>
+          </div>
+          <label class="field">Paper colour <input type="color" id="paperColor" value="#ffffff"></label>
+          <label class="field">Ink colour <input type="color" id="inkColor" value="#222222"></label>
+          <label class="field">Title font <select id="titleFont"></select></label>
+          <label class="field">Body font <select id="bodyFont"></select></label>
+        </section>
+
+        <section>
+          <h3>This post</h3>
+          <div class="row">
+            <button class="btn ghost" id="previewBtn">Preview</button>
+            <button class="btn" id="publishBtn">Publish</button>
+          </div>
+          <small id="status"></small>
+          <button class="btn ghost" id="deleteBtn">Delete this post</button>
+        </section>
+      </div>
+
+      <!-- My posts list -->
+      <div id="postsPanel" hidden>
+        <section>
+          <button class="btn" id="newPostBtn">New post</button>
+          <div id="postList"></div>
+        </section>
+      </div>
+    </aside>
+
+    <!-- The notebook page -->
+    <main>
+      <article class="page" id="page">
+        <textarea id="postTitle" class="page-title" rows="1" placeholder="Post title"></textarea>
+        <div id="postBody" class="page-text" contenteditable="true"
+             data-placeholder="Start writing here..."></div>
+        <div id="wordCount"></div>
+      </article>
+    </main>
+  </div>
+
+  <!-- ============ 3. BROWSE VIEW: other people's published posts ============ -->
+  <section id="browseView" hidden>
+    <div id="browseList">
+      <input type="search" id="searchBox" placeholder="Search articles">
+      <div id="postGrid"></div>
+    </div>
+    <div id="reader" hidden>
+      <button class="btn ghost" id="readerBack">Back to browsing</button>
+      <article class="page" id="readerPage">
+        <h1 class="page-title" id="readerTitle"></h1>
+        <div class="page-text" id="readerBody"></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ 4. DICTIONARY & THESAURUS VIEW ============ -->
+  <section id="dictView" hidden>
+    <h1>Dictionary &amp; Thesaurus</h1>
+    <div class="row">
+      <input type="search" id="wordInput" placeholder="Look up a word">
+      <button class="btn" id="lookupBtn">Look up</button>
+    </div>
+    <div class="row">
+      <button class="btn ghost on" id="modeDict">Dictionary</button>
+      <button class="btn ghost" id="modeThes">Thesaurus</button>
+    </div>
+    <div id="results">Type a word above to begin.</div>
+  </section>
+
+  <!-- All the behaviour lives in this file (must come last) -->
+  <script src="app.js"></script>
+</body>
+</html>
