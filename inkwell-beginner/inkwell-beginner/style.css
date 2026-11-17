@@ -1,0 +1,144 @@
+/* ==========================================================
+   STYLE.CSS - how Inkwell looks.
+   Tip: change the colours in section 1 and the whole site updates.
+   ========================================================== */
+
+/* ---------- 1. COLOURS (light mode) ---------- */
+:root {
+  --bg: #f3f1ee;          /* page background behind everything */
+  --panel: #ffffff;       /* sidebar and cards */
+  --text: #1d1b1a;        /* normal text */
+  --muted: #6b6661;       /* quieter text */
+  --line: #dcd7d1;        /* thin borders */
+  --accent: #2f4bd8;      /* buttons and highlights */
+  --accent-text: #ffffff; /* text on top of accent buttons */
+  --paper: #ffffff;       /* notebook paper colour */
+  --ink: #222222;         /* notebook writing colour */
+}
+
+/* Dark mode: same names, different colours. app.js switches this on. */
+[data-theme="dark"] {
+  --bg: #171615;
+  --panel: #222120;
+  --text: #f1eeea;
+  --muted: #a09a93;
+  --line: #3a3836;
+  --accent: #8ea0ff;
+  --accent-text: #10131f;
+  --paper: #24252b;
+  --ink: #ebe8e2;
+}
+
+/* ---------- 2. BASICS ---------- */
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }   /* makes the "hidden" attribute always win */
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 Inter, system-ui, sans-serif;
+}
+button, select, input, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+
+.btn {
+  background: var(--accent); color: var(--accent-text);
+  border: 1px solid var(--accent); border-radius: 8px; padding: 8px 14px; font-weight: 600;
+}
+.btn.ghost { background: transparent; color: var(--text); border-color: var(--line); }
+.btn.on { background: var(--accent); color: var(--accent-text); }
+.row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+input[type="search"], select {
+  border: 1px solid var(--line); background: var(--bg); border-radius: 8px; padding: 8px;
+}
+
+/* ---------- 3. LEATHER NAVIGATION BAR ---------- */
+#nav {
+  position: sticky; top: 0; z-index: 20; height: 58px;
+  display: flex; align-items: center; gap: 12px; padding: 0 20px;
+  background: linear-gradient(180deg, #7a4f31, #5b3820 55%, #4a2c17);  /* leather browns */
+  box-shadow: 0 2px 0 #2e1a0c, 0 6px 14px rgba(30, 15, 5, .35);
+  color: #f1e1c8;
+}
+#nav::after {        /* the dashed "stitching" along the bottom */
+  content: ""; position: absolute; left: 8px; right: 8px; bottom: 5px;
+  border-bottom: 2px dashed rgba(235, 200, 150, .45); pointer-events: none;
+}
+#nav .logo { font: 700 24px Fraunces, serif; color: #f6e7cc; margin-right: 8px; }
+#nav .tab { background: none; border: 0; color: #e2cba6; padding: 8px 14px; border-radius: 6px; font-weight: 600; }
+#nav .tab.on { background: rgba(30, 15, 5, .35); color: #fff4de; }
+#nav .right { margin-left: auto; }
+
+/* ---------- 4. WRITE VIEW LAYOUT ---------- */
+#writeView { display: grid; grid-template-columns: 290px 1fr; align-items: start; }
+#writeView.collapsed { grid-template-columns: 1fr; }   /* sidebar closed */
+#writeView.collapsed #side { display: none; }
+#sideOpen { position: fixed; left: 12px; top: 70px; z-index: 10; }
+
+#side {
+  position: sticky; top: 58px; height: calc(100vh - 58px); overflow: auto;
+  background: var(--panel); border-right: 1px solid var(--line);
+}
+.side-tabs { display: flex; gap: 4px; padding: 12px; }
+.side-tabs button { flex: 1; border: 1px solid var(--line); background: var(--bg); border-radius: 8px; padding: 6px; font-weight: 600; }
+.side-tabs button.on { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.side-tabs #sideClose { flex: 0 0 36px; }
+#side section { padding: 14px 16px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
+#side h3 { margin: 0; font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+#side select { width: 100%; }
+.tool {
+  min-width: 36px; height: 32px; padding: 0 8px; position: relative;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--line); background: var(--bg); border-radius: 6px;
+}
+.tool.on { background: var(--accent); color: var(--accent-text); }   /* shows when bold etc. is active */
+.tool input[type="color"] { position: absolute; inset: 0; opacity: 0; width: 100%; cursor: pointer; }
+.preset { border: 1px solid var(--line); background: var(--bg); border-radius: 6px; padding: 4px 8px; }
+.field { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.field select { width: 140px; }
+#postList button { display: block; width: 100%; text-align: left; border: 1px solid transparent; background: none; padding: 8px; border-radius: 8px; }
+#postList button.on { border-color: var(--line); background: var(--bg); }
+small { color: var(--muted); }
+
+/* ---------- 5. THE NOTEBOOK PAGE ---------- */
+main { display: flex; justify-content: center; padding: 24px 16px 80px; }
+.page {
+  width: 100%; max-width: 760px; padding: 64px 48px; border-radius: 14px;
+  background-color: var(--paper);   /* paper colour */
+  color: var(--ink);                /* writing colour */
+  /* The dotted lines: one row of dots every 32px */
+  background-image: radial-gradient(circle at 50% calc(100% - 1px),
+                    color-mix(in srgb, currentColor 38%, transparent) 1.2px, transparent 1.7px);
+  background-size: 10px 32px;
+  box-shadow: 0 1px 0 var(--line), 0 12px 28px rgba(40, 25, 10, .16);
+}
+/* Line heights are multiples of 32px so text sits exactly on the dotted lines */
+.page-title {
+  display: block; width: 100%; margin: 0; padding: 0; border: 0; outline: none; resize: none; overflow: hidden;
+  background: transparent; color: inherit;
+  font: 700 40px/64px var(--title-font, Fraunces), serif;
+}
+.page-text { font: 18px/32px var(--body-font, Lora), serif; min-height: 384px; outline: none; overflow-wrap: break-word; }
+.page-text:empty::before { content: attr(data-placeholder); opacity: .45; }
+.page-text p, .page-text div { margin: 0; }
+.page-text h2 { font: 700 26px/64px var(--title-font, Fraunces), serif; margin: 0; }
+.page-text blockquote { margin: 32px 0; padding-left: 18px; border-left: 4px solid currentColor; font-style: italic; }
+.page-text ul { margin: 0; padding-left: 28px; }
+.page-text img, .page-text video { max-width: 100%; display: block; margin: 32px auto; border-radius: 6px; }
+#wordCount { font-size: 13px; opacity: .55; margin-top: 32px; }
+
+/* ---------- 6. BROWSE AND DICTIONARY ---------- */
+#browseView, #dictView { max-width: 900px; margin: 0 auto; padding: 28px 18px 80px; display: flex; flex-direction: column; gap: 16px; }
+#postGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-top: 16px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; text-align: left; }
+.card:hover { border-color: var(--accent); }
+.card h3 { margin: 0 0 6px; font-family: Fraunces, serif; }
+#results { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 20px; min-height: 120px; }
+#results .chip { border: 1px solid var(--line); background: var(--bg); border-radius: 99px; padding: 4px 12px; margin: 0 6px 6px 0; }
+
+/* ---------- 7. SMALL SCREENS ---------- */
+@media (max-width: 800px) {
+  #writeView { grid-template-columns: 1fr; }
+  #side { position: static; height: auto; }
+  .page { padding: 64px 20px; }
+}
